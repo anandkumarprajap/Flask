@@ -1,0 +1,182 @@
+1️⃣ Project Structure (Very Important)
+
+Your folder must look like this:
+
+Flask_Project
+│
+│ app.py
+│
+└── templates
+     │
+     ├── base.html
+     ├── home.html
+     └── about.html
+
+Flask automatically loads HTML files from the templates folder.
+...........................................................................................
+2️⃣ app.py (Connect URLs with HTML Pages)
+
+from flask import Flask, render_template
+
+app = Flask(__name__)
+
+# Home page route
+@app.route("/")
+def student():
+    return render_template("home.html")
+
+
+# About page route
+@app.route("/about")
+def about():
+    return render_template("about.html")
+
+
+if __name__ == "__main__":
+    app.run(debug=True)
+
+.........................................................................................
+What this means
+URL	-----Function---------	HTML Page
+/--------student()--------  home.html
+/about---about()--------	about.html
+.......................................................................................
+So when the user opens:
+http://127.0.0.1:5000/
+
+➡ Flask loads home.html
+When the user opens:
+
+http://127.0.0.1:5000/about
+➡ Flask loads about.html
+
+...............................................................................................
+3️⃣ base.html (Navigation Bar)
+This file contains the header and navigation links.
+
+<header>
+    <h1>My Website</h1>
+
+    <nav>
+
+        <!-- Home page link -->
+        <a href="/">Home</a>
+
+        <!-- About page link -->
+        <a href="/about">About</a>
+
+    </nav>
+</header>
+
+..........................................................................................
+What happens when you click
+Click Home
+      ↓
+href="/"
+      ↓
+Flask route "/"
+      ↓
+home.html loads
+Click About
+      ↓
+href="/about"
+      ↓
+Flask route "/about"
+      ↓
+about.html loads
+
+..........................................................................................
+4️⃣ home.html
+{% extends "base.html" %}
+
+{% block title %}Home Page{% endblock %}
+
+{% block content %}
+
+<h2>Welcome to the Home Page</h2>
+
+<p>This is the home page built using Flask.</p>
+
+{% endblock %}
+
+This page inherits layout from base.html.
+
+..............................................................................................
+
+5️⃣ about.html
+{% extends "base.html" %}
+
+{% block title %}About Us Page{% endblock %}
+
+{% block content %}
+
+<h1>This is About Us Page</h1>
+
+<p>Best Web Development Company in India</p>
+
+{% endblock %}
+.............................................................................................
+
+6️⃣ How Content Changes When Clicking Navigation
+Because both pages use:
+
+{% extends "base.html" %}
+Only the content block changes.
+
+Example:
+When user clicks Home
+.................................................................................................
+Page shows:
+My Website
+Home | About
+
+OUTPUT
+Welcome to the Home Page
+This is the home page built using Flask.
+When user clicks About
+...............................................
+Page shows:
+My Website
+Home | About
+
+OUTPUT
+This is About Us Page
+Best Web Development Company in India
+
+...................................................
+Header and footer stay same because they come from base.html.
+7️⃣ Best Practice (Flask Way)
+
+Instead of writing links manually:
+
+<a href="/about">
+
+Use url_for()
+
+<nav>
+    <a href="{{ url_for('student') }}">Home</a>
+    <a href="{{ url_for('about') }}">About</a>
+</nav>
+
+..........................................................................
+Advantages:
+
+✔ safer
+✔ avoids broken links
+✔ recommended in Flask projects
+
+..........................................................................
+8️⃣ Page Navigation Flow
+User clicks navigation link
+        ↓
+Browser sends request
+        ↓
+Flask route executes
+        ↓
+render_template()
+        ↓
+Jinja2 loads template
+        ↓
+Page content displayed
+
+.............................................................................................................

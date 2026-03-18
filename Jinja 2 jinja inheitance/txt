@@ -1,0 +1,473 @@
+Jinja2 is a template engine used in Python web frameworks like Flask.
+It allows you to write HTML and insert Python variables, conditions, loops, etc. inside HTML files.
+In simple words:
+➡️ Jinja2 = HTML + Python logic
+So Flask sends data from app.py → HTML template, and Jinja2 displays it.
+1. Basic Jinja2 Syntax
+1️⃣ Print Python variable
+{{ variable }}
+..........................................................................................................
+Example:
+app.py
+
+from flask import Flask, render_template
+
+app = Flask(__name__)
+
+@app.route("/")
+def home():
+    return render_template("welcome.html", name="Anand")
+..................
+welcome.html
+<h1>Welcome {{ name }}</h1>
+................
+Output:
+Welcome Anand
+.............................................................................................
+2. Jinja2 Condition (if-else)
+
+Jinja2 allows conditions similar to Python.
+
+{% if condition %}
+{% else %}
+{% endif %}
+...............................
+Example:
+app.py
+
+@app.route("/result")
+def result():
+    return render_template("welcome.html", is_topper=True)
+...........................
+welcome.html
+
+{% if is_topper %}
+<p>You are a topper</p>
+{% else %}
+<p>You need to work hard</p>
+{% endif %}
+...............
+Output:
+You are a topper
+.........................................................................................
+3. Jinja2 Template Inheritance
+In large websites many pages share the same layout like:
+
+Navbar
+Footer
+Header
+Instead of writing it again and again we create a base template.
+....................................
+Concept:
+base.html → main layout
+other pages → extend base.html
+....................................
+4. Project Structure
+Flask_Project
+│
+│ app.py
+│
+└── templates
+      base.html
+      welcome.html
+      about.html
+
+................................................................................................
+5. base.html (Main Template)
+
+This file contains the common layout.
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{% block title %}My Website{% endblock %}</title>
+</head>
+
+<body>
+
+<h1>My Flask Website</h1>
+
+<hr>
+
+{% block content %}
+<!-- Page content will come here -->
+{% endblock %}
+
+<hr>
+
+<footer>
+<p>Copyright 2026</p>
+</footer>
+
+</body>
+</html>
+.................................
+Important:
+{% block title %}{% endblock %}
+{% block content %}{% endblock %}
+These are placeholders where child templates insert content.
+...................................
+6. welcome.html (Extending base)
+
+{% extends "base.html" %}
+
+{% block title %}
+Welcome Page
+{% endblock %}
+
+{% block content %}
+
+<h2>Welcome {{ name }}</h2>
+
+{% if is_topper %}
+<p>You are a topper</p>
+{% else %}
+<p>You need to work hard</p>
+{% endif %}
+
+{% endblock %}
+.......................................
+Explanation:
+{% extends "base.html" %}
+means
+➡️ use base.html layout
+
+.......................................
+7. about.
+
+{% extends "base.html" %}
+
+{% block title %}
+About Page
+{% endblock %}
+
+{% block content %}
+
+<h2>About Us</h2>
+<p>This is about page</p>
+
+{% endblock %}
+
+.....................................................
+8. app.py (Connecting all files)
+
+from flask import Flask, render_template
+
+app = Flask(__name__)
+
+@app.route("/")
+def home():
+    return render_template(
+        "welcome.html",
+        name="Anand",
+        is_topper=True
+    )
+
+@app.route("/about")
+def about():
+    return render_template("about.html")
+
+
+if __name__ == "__main__":
+    app.run(debug=True)
+
+.................................................................................................
+9. How it works (Flow)
+
+User visits /
+      ↓
+Flask route in app.py
+      ↓
+render_template("welcome.html")
+      ↓
+welcome.html extends base.html
+      ↓
+base.html layout + welcome content
+      ↓
+Final HTML page shown
+
+...................................................................................................
+10. Important Jinja2 Symbols
+Symbol	Meaning
+{{ }}	Print variable
+{% %}	Logic (if, for, block)
+{# #}	Comment
+............................................
+Example:
+{{ name }}   → prints variable
+{% if %}     → condition
+{% for %}    → loop
+11. Simple Real Example Output
+..............................................
+Output  When visiting /:
+My Flask Website
+
+Welcome Anand
+You are a topper
+
+Copyright 2026
+
+.................................................................................................
+
+1️⃣ Project Structure (How files are linked)
+
+Your project should look like this:
+Flask_Project
+│
+│ app.py
+│
+└── templates
+      base.html
+      feedback.html
+      thankyou.html
+
+Flask automatically looks for HTML files inside the templates folder.
+...................................................................................................
+1️⃣ app.py (Main Flask Application)
+
+# Import Flask framework and required modules
+from flask import Flask, render_template, request
+
+# Create Flask application
+app = Flask(__name__)
+
+# Route for Home Page
+@app.route("/")
+def home():
+    # When user opens http://127.0.0.1:5000/
+    # Flask loads feedback.html page
+    return render_template("feedback.html")  # home page
+
+
+# Route for Feedback Form
+# methods allow GET (open page) and POST (submit form)
+@app.route("/feedback", methods=["GET", "POST"])
+def feedback():
+
+    # If form is submitted
+    if request.method == "POST":
+
+        # Get data from form input fields
+        # name attribute in HTML connects here
+        name = request.form.get("username")
+        message = request.form.get("message")
+
+        # Render thankyou.html page
+        # Send variables to template using Jinja2
+        return render_template(
+            "thankyou.html",
+            user=name,        # variable user = name
+            message=message   # variable message = message
+        )
+
+    # If request method is GET
+    # open feedback form page again
+    return render_template("feedback.html")
+
+
+# Run Flask server
+if __name__ == "__main__":
+    app.run(debug=True)   # debug=True auto reloads server
+
+    ........................................................................................
+2️⃣ base.html (Main Layout Template)
+
+This file is the parent template used by other pages.
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    <!-- Title block (child templates can change title) -->
+    <title>
+        {% block title %} My Feedback Site {% endblock %}
+    </title>
+
+    <style>
+    body {
+        font-family: Arial, Helvetica, sans-serif;
+        margin: 20px;
+        background: white;
+    }
+
+    /* Header and footer style */
+    header , footer {
+        background-color: #090909;
+        padding: 10px;
+        color: white;
+    }
+
+    /* Navigation link styling */
+    nav a {
+        margin: 0 10px;
+        text-decoration: none;
+        color: white;
+    }
+
+    /* Main content area styling */
+    main {
+        background: #f4f4f4;
+        padding: 20px;
+        margin-top: 20px;
+        border-radius: 5px;
+    }
+    </style>
+
+</head>
+
+<body>
+
+    <!-- Website header -->
+    <header>
+
+        <h1>My Feedback Page</h1>
+
+        <!-- Navigation menu -->
+        <nav>
+
+            <!-- Link to home page -->
+            <a href="/">Feedback</a>
+
+        </nav>
+
+    </header>
+
+    <!-- Main content section -->
+    <main>
+
+        <!-- Content block where child templates insert content -->
+        {% block content %}
+        {% endblock %}
+
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2026 My Feedback Site</p>
+    </footer>
+
+</body>
+</html>
+............................................................................
+3️⃣ feedback.html (Feedback Form Page)
+
+This page extends base.html.
+
+{% extends "base.html" %}  <!-- inherit layout from base.html -->
+
+<!-- Replace title block -->
+{% block title %} Feedback Form {% endblock %}
+
+<!-- Replace content block -->
+{% block content %}
+
+    <!-- Page heading -->
+    <h2>Send Us a Feedback Message</h2>
+
+    <!-- Form sends data to /feedback route -->
+    <form method="POST" action="/feedback">
+
+        <!-- Username input -->
+        <label for="username">Name:</label>
+
+        <!-- name="username" connects with request.form.get("username") -->
+        <input type="text"
+               name="username"
+               id="username"
+               placeholder="Enter your username">
+
+        <br><br>
+
+        <!-- Message label -->
+        <label for="message">Message:</label><br>
+
+        <!-- Textarea for message -->
+        <!-- name="message" connects with request.form.get("message") -->
+        <textarea id="message"
+                  name="message"
+                  rows="5"
+                  cols="40"
+                  placeholder="Enter your message here"></textarea>
+
+        <br><br>
+
+        <!-- Submit button -->
+        <input type="submit" value="Submit Feedback">
+
+    </form>
+
+{% endblock %}
+...............................................................................
+4️⃣ thankyou.html (Result Page)
+
+This page shows the submitted data.
+
+{% extends "base.html" %}  <!-- inherit layout -->
+
+<!-- Page title -->
+{% block title %} Thank You {% endblock %}
+
+<!-- Page content -->
+{% block content %}
+
+    <!-- Display user name using Jinja2 -->
+    <h2>Thank You {{ user }}!</h2>
+
+    <p>For Your Feedback,</p>
+
+    <!-- Display message -->
+    <blockquote>
+        {{ message }}
+    </blockquote>
+
+    <!-- Link back to feedback page -->
+    <a href="/feedback">Return to Home</a>
+
+{% endblock %}
+..............................................................................................
+5️⃣ How All Files Are Linked
+Project structure:
+Flask_Project
+│
+│ app.py
+│
+└── templates
+     │
+     ├── base.html
+     ├── feedback.html
+     └── thankyou.html
+................................................................................................
+6️⃣ Complete Flow
+User opens browser
+        ↓
+http://127.0.0.1:5000
+        ↓
+Flask route "/"
+        ↓
+feedback.html loads
+        ↓
+User fills form
+        ↓
+Submit button
+        ↓
+POST request → /feedback
+        ↓
+Flask receives data
+        ↓
+name = request.form.get()
+message = request.form.get()
+        ↓
+thankyou.html loads
+        ↓
+Jinja2 prints variables
+        ↓
+Thank you page shown
+.............................................................................................
+7️⃣ Jinja2 Features Used
+Feature	Example
+Template inheritance--------	{% extends "base.html" %}
+Blocks---------	{% block content %}
+Variables--------	{{ user }}
+Form data---------	request.form.get()
+
+..............................................................................................

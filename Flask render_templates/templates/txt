@@ -1,0 +1,178 @@
+1️⃣ What is render_template() ?
+Definition
+render_template() is used to send an HTML file from the templates folder to the browser.
+......................
+Meaning:
+Python (app.py)
+        ↓
+render_template()
+        ↓
+HTML file
+        ↓
+Browser shows webpage
+.......................
+Example:
+return render_template("home.html")
+Flask will look for:
+templates/home.html
+..............................
+2️⃣ Flask Project Structure
+Flask requires a templates folder.
+Flask_Project
+│
+├── app.py
+│
+└── templates
+      │
+      └── home.html
+Important rule:
+HTML files must be inside templates folder
+
+..........................................
+3️⃣ app.py (Backend Code)
+Example Flask code:
+
+from flask import Flask, render_template
+
+app = Flask(__name__)
+
+@app.route("/")
+def home():
+    return render_template("home.html")
+
+if __name__ == "__main__":
+    app.run(debug=True)
+............................
+Explanation:
+Flask--	create Flask app
+render_template	--load HTML file
+"home.html"	---file inside templates folder
+..........................
+4️⃣ templates/home.html (Frontend)
+Create this file inside templates folder.
+templates/home.html
+
+Code:
+
+<!DOCTYPE html>
+<html>
+<head>
+<title>Flask Home</title>
+</head>
+
+<body>
+
+<h2>Login Page</h2>
+
+<form method="POST">
+Username: <input type="text" name="username"><br><br>
+
+Password: <input type="password" name="password"><br><br>
+
+<input type="submit" value="Login">
+
+</form>
+
+</body>
+</html>
+
+......................................................
+5️⃣ How app.py connects with home.html
+Flow:
+Browser
+   │
+   │  GET /
+   ▼
+Flask Route "/"
+   │
+   │ return render_template("home.html")
+   ▼
+templates/home.html
+   │
+   ▼
+Browser shows page
+.........................
+So connection is:
+Route "/"  → render_template("home.html")
+
+...............................................................................................
+6️⃣ Passing Data to Template
+We can send variables from Python to HTML.
+.................................
+               Example in app.py
+from flask import Flask, render_template
+
+app = Flask(__name__)
+
+@app.route("/")
+def home():
+    return render_template("home.html", name="Anand")
+
+app.run(debug=True)
+......................
+         home.html
+<h1>Welcome {{ name }}</h1>
+
+Output:
+Welcome Anand
+
+....................................................................................
+1️⃣ Project Structure
+
+Your folder should look like this:
+
+Flask_Project
+│
+├── app.py
+│
+└── templates
+      │
+      └── login.html
+
+Flask automatically looks for HTML files inside the templates folder.
+.....................................................
+2️⃣ Flask Backend (app.py)
+from flask import Flask, render_template, request
+
+app = Flask(__name__)
+
+# Route to open login page
+@app.route("/")
+def home():
+    return render_template("login.html")
+
+# Route that receives form data
+@app.route("/submit", methods=["POST"])
+def submit():
+
+    # Get form data sent from HTML
+    username = request.form.get("username")
+    password = request.form.get("password")
+
+    return f"Username: {username} | Password: {password}"
+.............
+
+3️⃣ HTML Template (templates/login.html)
+
+<!DOCTYPE html>
+<html>
+
+<body>
+
+<h2>Login Form</h2>
+
+<form method="POST" action="/submit">
+
+Username:
+<input type="text" name="username"><br><br>
+
+Password:
+<input type="password" name="password"><br><br>
+
+<input type="submit" value="Submit">
+
+</form>
+
+</body>
+</html>
+.......................................................................................................

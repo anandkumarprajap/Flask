@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>
+    {% block title %} My Site{% endblock %}
+    </title>
+</head>
+
+<body>
+    <header>
+        <h1>Welcome to My Site</h1>
+
+        <nav>
+            <a href="/">Home</a>
+            <!-- <a href="/feedback">Feedback</a> -->
+            <!-- <a href="/about">About</a> -->
+        </nav>
+
+    </header>
+
+{% with messages = get_flashed_messages() %}
+    {% if messages %}
+        <ul style="color: green;">
+            {% for msg in messages %}
+                <li>{{ msg }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+{% endwith %}
+
+{% block content %}
+{% endblock %}
+
+</body>
+</html>
